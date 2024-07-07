@@ -5,3 +5,11 @@ pandas
 scikit-learn
 tables
 sentencepiece
+python-dotenv
+pyaml-env
+psycopg2-binary
+fastapi[all]
+pydantic
+SQLAlchemy
+uvicorn
+alembic
