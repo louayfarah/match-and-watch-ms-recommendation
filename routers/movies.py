@@ -24,15 +24,16 @@ async def run_new_movies_query(
 @movies_router.get("/latest")
 def get_latest_movies():
     all_movies = []
+    total_movies = 50
     page = 1
 
-    while len(all_movies) < 50:
+    while len(all_movies) < total_movies:
         movies = fetch_leatest_movies("new", page)
         if not movies:
             break 
         all_movies.extend(movies)
         page += 1
-    return all_movies[:50]
+    return all_movies
 
 
 # @movies_router.get("/question")
