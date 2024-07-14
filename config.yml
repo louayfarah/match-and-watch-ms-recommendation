@@ -1,0 +1,9 @@
+tmdb:
+  token: ${TMDB_TOKEN}
+movieglu:
+  client: ${MOVIEGLU_CLIENT}
+  api_key: ${MOVIEGLU_API_KEY}
+  authorization: ${MOVIEGLU_AUTHORIZATION}
+  territory: ${MOVIEGLU_TERRITORY}
+  api_version: ${MOVIEGLU_API_VERSION}
+  geolocation: ${MOVIEGLU_GEOLOCATION}

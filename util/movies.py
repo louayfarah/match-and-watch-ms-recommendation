@@ -1,3 +1,4 @@
+import requests
 from sklearn.metrics.pairwise import cosine_similarity
 import torch
 import numpy as np
@@ -26,3 +27,13 @@ def find_top_movies(df, input_text, top_n=5):
 
     top_movies = df.sort_values(by="cosine_similarity", ascending=False).head(top_n)
     return top_movies["title"].tolist()
+
+
+def fetch_leatest_movies(movie_type, page=1):
+        url = f"https://vidsrc.to/vapi/movie/{movie_type}/{page}"
+        response = requests.get(url)
+        if response.status_code == 200:
+            return response.json().get('result', {}).get('items', [])
+        else:
+            print(f"Failed to retrieve data: {response.status_code} - {response.text}")
+            return []
