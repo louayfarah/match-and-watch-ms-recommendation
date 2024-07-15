@@ -1,9 +1,12 @@
 import requests
 from sklearn.metrics.pairwise import cosine_similarity
 import torch
+from datetime import datetime
 import numpy as np
 from load import model, tok
+from config import Config
 
+conf = Config()
 
 def get_embeddings(text):
     enc = tok(text, return_tensors="pt")
@@ -37,3 +40,36 @@ def fetch_leatest_movies(movie_type, page=1):
         else:
             print(f"Failed to retrieve data: {response.status_code} - {response.text}")
             return []
+        
+
+# def fetch_movie_image(movies_list: list):
+#     results = []
+#     cnt=5
+#     for movie in movies_list:
+#         cnt=cnt-1
+#         if cnt<0:
+#              break
+#         url = f"https://api.movieglu.com/filmDetails/?film_id={movie['tmdb_id']}"
+
+#         headers = {
+#             "client": conf.get_movieglu_client(),
+#             "x-api-key": conf.get_movieglu_api_key(),
+#             "authorization": f"Basic {conf.get_movieglu_authorization()}",
+#             "territory": conf.get_movieglu_territory(),
+#             "api-version": conf.get_movieglu_api_version(),
+#             "geolocation": conf.get_movieglu_geolocation(),
+#             "device-datetime": datetime.utcnow().isoformat() + "Z"
+#         }
+#         print(url)
+#         response = requests.get(url, headers=headers)
+        
+#         if response.status_code == 200:
+#             data = response.json()
+#             poster_url = data.get('images', {}).get('poster', 'Poster not available')
+#             print(poster_url)
+#             results.append({
+#                 "title": movie["title"],
+#                 "tmdb_id": movie["tmdb_id"],
+#                 "poster_url": poster_url
+#             })
+#     return results
