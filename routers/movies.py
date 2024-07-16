@@ -91,23 +91,3 @@ def get_latest_movies():
         return {"error": "Unable to fetch movie "}, response.status_code
 
 
-# @movies_router.get("/latest_imdb8")
-# def get_latest_movies():
-#     url = "https://imdb8.p.rapidapi.com/news/v2/get-by-category"
-
-#     querystring = {"category":"MOVIE","first":"20"}
-
-#     headers = {
-#         "x-rapidapi-key": "bbcfdac50amsh60af14119911f66p18ab9fjsn77a641adfe85",
-#         "x-rapidapi-host": "imdb8.p.rapidapi.com"
-#     }
-
-#     response = requests.get(url, headers=headers, params=querystring)
-#     if response.status_code==200:
-#         data=response.json()
-#         return response.json()
-#     else:
-#         return {"error": "Unable to fetch movie "}, response.status_code
-
-
-
