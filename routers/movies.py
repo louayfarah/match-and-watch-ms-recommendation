@@ -17,11 +17,7 @@ movies_router = APIRouter(tags=["Movies"])
 
 
 @movies_router.post(
-<<<<<<< HEAD
-    "/movies", status_code=201, response_model=list[str]
-=======
     "/api/movies", tags=["Movies"], status_code=201, response_model=list[str]
->>>>>>> origin/develop
 )
 async def run_new_movies_query(
     query_string: str,
