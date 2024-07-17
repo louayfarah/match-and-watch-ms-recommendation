@@ -1,3 +1,6 @@
+db:
+  postgres:
+    url: ${POSTGRES_URI}
 tmdb:
   token: ${TMDB_TOKEN}
 movieglu:
