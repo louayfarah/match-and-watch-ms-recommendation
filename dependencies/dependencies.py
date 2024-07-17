@@ -16,7 +16,7 @@ def get_db():
 
 def validate_user_token(token: str):
     response = requests.post(
-        "http://backend:8000/check/user/token",
+        f"{conf.get_user_microservice_url()}",
         json=token
     )
     if response.status_code == 200:
