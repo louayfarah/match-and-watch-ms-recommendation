@@ -1,13 +1,17 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from routers import movies_router
 
+from routers import movies_router
+from core.databases.postgres.postgres import engine
+from core.models import tables
 
 load_dotenv()  # Load environmental variables
 
 # Create the backend application
 app = FastAPI()
+
+tables.Base.metadata.create_all(bind=engine)
 
 # Allow all origins
 origins = ["*"]
@@ -26,4 +30,4 @@ app.include_router(movies_router)
 # Define the root source
 @app.get("/", tags=["Root"], status_code=200)
 async def root():
-    return {"message": "The ride microservice is up!"}
+    return {"message": "The recommendation microservice is up!"}
