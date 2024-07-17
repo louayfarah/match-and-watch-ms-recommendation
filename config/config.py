@@ -16,9 +16,12 @@ class Config(metaclass=Singleton):
         except FileNotFoundError:
             print("Warning: Configuration file was not found, hence not parsed!")
 
+    def get_database_connection_string(self):
+        return self.conf["db"]["postgres"]["url"]
+
     def get_tmdb_token(self):
         return self.conf["tmdb"]["token"]
-    
+
     def get_movieglu_client(self):
         return self.conf["movieglu"]["client"]
 
