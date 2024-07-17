@@ -5,8 +5,8 @@ import uuid
 
 
 def create_session(user_id:uuid.UUID , db:Session):
-    # code = random.randint(100000, 999999)
-    code=uuid.uuid4()
+    code = random.randint(100000, 999999)
+    # code=uuid.uuid4()
     new_session = tables.Session(user_id=user_id, session_code=code)
     db.add(new_session)
     db.commit()

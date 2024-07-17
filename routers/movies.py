@@ -1,18 +1,23 @@
 import requests
+import uuid
+from sqlalchemy.orm import Session
+from core.schemas import schemas
+from core.crud import crud
 from datetime import datetime, timezone
-
-from fastapi import APIRouter
+from dependencies import get_db, validate_user_token
+from core.models import tables
+from fastapi import APIRouter, Depends
 
 from util import find_top_movies, fetch_leatest_movies
 from load import df
 from config import Config
 
 conf = Config()
-movies_router = APIRouter()
+movies_router = APIRouter(tags=["Movies"])
 
 
 @movies_router.post(
-    "/movies", tags=["Movies"], status_code=201, response_model=list[str]
+    "/movies", status_code=201, response_model=list[str]
 )
 async def run_new_movies_query(
     query_string: str,
@@ -89,5 +94,7 @@ def get_latest_movies():
         return response.json()
     else:
         return {"error": "Unable to fetch movie "}, response.status_code
+
+
 
 
