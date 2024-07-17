@@ -1,6 +1,6 @@
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import Column, String, ForeignKey, DateTime,Integer,Float
+from sqlalchemy import Column, String, ForeignKey, DateTime,Integer,Float,Boolean
 from sqlalchemy.orm import declarative_base, relationship
 from datetime import datetime
 Base = declarative_base()
@@ -33,6 +33,7 @@ class Session(Base):
     participants = relationship(
         "SessionParticipant", backref="session", cascade="all, delete-orphan"
     )
+    status = Column(Boolean, default=True) 
 
 class SessionParticipant(Base):
     __tablename__ = 'session_participants'

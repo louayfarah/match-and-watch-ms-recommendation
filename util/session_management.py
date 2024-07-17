@@ -1,30 +1,49 @@
 import random
-from core.models import tables
 from sqlalchemy.orm import Session
+from fastapi import HTTPException, status
+from core.crud import crud
 import uuid
 
 
-def create_session(user_id:uuid.UUID , db:Session):
-    code = random.randint(100000, 999999)
-    # code=uuid.uuid4()
-    new_session = tables.Session(user_id=user_id, session_code=code)
-    db.add(new_session)
-    db.commit()
-    return {"code":code}
+def create_session(user_id: uuid.UUID, db: Session):
+    return crud.create_session(user_id, db)
 
 
-def join_session(session_code: uuid.UUID, user_id: uuid.UUID, db: Session):
-    session = db.query(tables.Session).filter(tables.Session.session_code == session_code).first()
+def join_session(session_code: int, user_id: uuid.UUID, db: Session):
+    session = crud.get_session_by_code(session_code, db)
     if not session:
-            return {"error": "Session not found"}
-    
-    participant = db.query(tables.SessionParticipant).filter(tables.SessionParticipant.session_id==session.id, tables.SessionParticipant.user_id==user_id).first()
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Session not found"
+        )
+
+    if not session.status:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Session is closed and cannot be joined",
+        )
+
+    participant = crud.get_participant_by_session_id(session.id, user_id, db)
     if participant:
-        return {"error": "You are already a participant in this session"}
-    
-    new_participant = tables.SessionParticipant(session_id=session.id, user_id=user_id)
-    db.add(new_participant)
-    db.commit()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You are already a participant in this session",
+        )
+
+    crud.add_participant(session.id, user_id, db)
     return {"message": "You have successfully joined the session"}
 
 
+def close_session(session_code: int, db: Session):
+    session = crud.get_session_by_code(session_code, db)
+    if not session:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Session not found"
+        )
+
+    if not session.status:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Session is already closed"
+        )
+
+    crud.close_session_by_code(session_code, db)
+    return {"message": "Session has been successfully closed"}
