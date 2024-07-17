@@ -41,3 +41,12 @@ class SessionParticipant(Base):
     session_id = Column(UUID(as_uuid=True), ForeignKey('sessions.id'), index=True)
     user_id = Column(UUID(as_uuid=True), nullable=False) 
     joined_at = Column(DateTime, default=datetime.utcnow)
+
+
+class Answer(Base):
+    __tablename__ = "answers"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    session_id = Column(UUID(as_uuid=True), ForeignKey("sessions.id"))
+    user_id = Column(UUID(as_uuid=True))
+    answers = Column(String)

@@ -1,10 +1,11 @@
-import random
+import torch
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from core.crud import crud
 import uuid
-
-
+from core.models import tables
+from util import find_session_top_movies,get_embedding
+from load import df
 def create_session(user_id: uuid.UUID, db: Session):
     return crud.create_session(user_id, db)
 
@@ -44,6 +45,16 @@ def close_session(session_code: int, db: Session):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Session is already closed"
         )
+    answers_tuples = db.query(tables.Answer.answers).filter(tables.Answer.session_id==session.id).all()
+    all_answers = [answers[0] for answers in answers_tuples] 
+    # print("*********************")
+    # print(answers_tuples)
+    # print("------------------")
+    # print(all_answers)
 
-    crud.close_session_by_code(session_code, db)
-    return {"message": "Session has been successfully closed"}
+    embeddings = [get_embedding(answer) for answer in all_answers]
+    average_embedding = torch.mean(torch.stack(embeddings), dim=0)
+
+    recommended_movies = find_session_top_movies(df, average_embedding)
+
+    return {"recommended_movies": recommended_movies}

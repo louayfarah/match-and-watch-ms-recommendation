@@ -25,7 +25,6 @@ async def run_new_movies_query(
     res = find_top_movies(df, query_string)
     return res
 
-
 @movies_router.get("/api/movies/latest")
 def get_latest_movies():
     all_movies = []

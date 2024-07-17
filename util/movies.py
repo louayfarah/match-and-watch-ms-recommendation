@@ -49,3 +49,14 @@ def fetch_leatest_movies(movie_type, page=1):
     else:
         print(f"Failed to retrieve data: {response.status_code} - {response.text}")
         return []
+
+def find_session_top_movies(df, input_embedding, top_n=5):
+    df["cosine_similarity"] = df["combined_embedding"].apply(
+        lambda x: cosine_similarity(x.reshape(1, -1), input_embedding.numpy())[0][0]
+    )
+
+    top_25_movies = df.nlargest(25, "cosine_similarity")
+    top_25_movies_sorted = top_25_movies.sort_values(by="imdb_score", ascending=False)
+    final_top_movies = top_25_movies_sorted.head(top_n)
+
+    return final_top_movies["title"].tolist()

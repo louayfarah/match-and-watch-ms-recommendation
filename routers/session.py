@@ -14,7 +14,20 @@ from config import Config
 conf = Config()
 session_router = APIRouter(tags=["Session"])
 
-
+@session_router.post("/submit/answer")
+def submit_session_answer(
+    session_code: int,
+    answers: str,
+    db: Session = Depends(get_db),
+    user: schemas.AuthenticatedUser = Depends(validate_user_token),
+):
+    session=crud.get_session_by_code(session_code,db)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found or already closed")
+    new_answer = tables.Answer(session_id=session.id, user_id=user.get('id'), answers=answers)
+    db.add(new_answer)
+    db.commit()
+    return {"status": "answers submitted"}
 
 @session_router.get("/generate/code")
 def generate_code(
