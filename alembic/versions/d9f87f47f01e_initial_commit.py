@@ -37,6 +37,7 @@ def upgrade() -> None:
         sa.Column("length", sa.String(length=255), nullable=True),
         sa.Column("platform", sa.String(length=255), nullable=True),
         sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("imdb_id"),
     )
     # ### end Alembic commands ###
 

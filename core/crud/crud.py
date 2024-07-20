@@ -44,3 +44,14 @@ def close_session_by_code(session_code: int, db: Session):
         session.status = False
         db.commit()
     return session
+
+
+def get_movie_by_imdb_id(imdb_id:str , db: Session):
+    return db.query(tables.Movie).filter(tables.Movie.imdb_id==imdb_id).first()
+
+def create_feedback(rate: int, movie_imdb_id: str, user_id: uuid.UUID, db: Session):
+    new_feedback = tables.Feedback(
+        movie_imdb_id=movie_imdb_id, user_id=user_id, rate=rate
+    )
+    db.add(new_feedback)
+    db.commit()

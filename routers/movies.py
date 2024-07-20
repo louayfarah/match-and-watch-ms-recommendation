@@ -23,6 +23,7 @@ async def run_new_movies_query(
     query_string: str,
 ):  # TODO: Change into different aspects from the questions, and build the query string accordingly
     res = find_top_movies(df, query_string)
+    # TODO: change the response and invoke cruds.create_feedback() for each movie with rate 0
     return res
 
 @movies_router.get("/api/movies/latest")
