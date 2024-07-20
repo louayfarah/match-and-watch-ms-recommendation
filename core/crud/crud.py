@@ -10,6 +10,7 @@ def create_session(user_id: uuid.UUID, db: Session):
     new_session = tables.Session(user_id=user_id, session_code=code)
     db.add(new_session)
     db.commit()
+    add_participant(session_id=new_session.id, user_id=user_id, db=db)
     return {"code": code, "session_id": new_session.id, "status": new_session.status}
 
 
@@ -44,3 +45,17 @@ def close_session_by_code(session_code: int, db: Session):
         session.status = False
         db.commit()
     return session
+
+
+def get_user_by_session_id(user_id: uuid.UUID, session_id: int, db: Session):
+    return (
+        db.query(tables.Answer)
+        .filter(
+            tables.Answer.session_id == session_id, tables.Answer.user_id == user_id
+        )
+        .first()
+    )
+
+
+def get_session_creater(user_id: uuid.UUID, session_id: int, db: Session):
+    return db.query(tables.Session).filter(tables.Session.user_id==user_id, tables.Session.id==session_id).first()

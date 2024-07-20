@@ -24,12 +24,18 @@ def submit_session_answer(
     session=crud.get_session_by_code(session_code,db)
     if not session:
         raise HTTPException(status_code=404, detail="Session not found or already closed")
+    user_submitted = crud.get_user_by_session_id(user.get('id'), session.id, db)
+    if user_submitted:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You have already submited your answers ",
+        )
     new_answer = tables.Answer(session_id=session.id, user_id=user.get('id'), answers=answers)
     db.add(new_answer)
     db.commit()
     return {"status": "answers submitted"}
 
-@session_router.get("/generate/code")
+@session_router.post("/generate/code")
 def generate_code(
     user: schemas.AuthenticatedUser = Depends(validate_user_token),
     db: Session = Depends(get_db),
@@ -45,12 +51,12 @@ def join_session(
     return session_management.join_session(session_code,user.get('id'),db)
 
 
-@session_router.delete("/close")
+@session_router.post("/close")
 def close_session(
     session_code: int,
     db: Session = Depends(get_db),
     user: schemas.AuthenticatedUser = Depends(validate_user_token),
 ):
-    return session_management.close_session(session_code,db)
+    return session_management.close_session(session_code,user.get('id'),db)
 
 

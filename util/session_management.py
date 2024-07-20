@@ -6,6 +6,8 @@ import uuid
 from core.models import tables
 from util import find_session_top_movies,get_embedding
 from load import df
+
+
 def create_session(user_id: uuid.UUID, db: Session):
     return crud.create_session(user_id, db)
 
@@ -34,8 +36,13 @@ def join_session(session_code: int, user_id: uuid.UUID, db: Session):
     return {"message": "You have successfully joined the session"}
 
 
-def close_session(session_code: int, db: Session):
+def close_session(session_code: int, user_id: uuid.UUID, db: Session):
     session = crud.get_session_by_code(session_code, db)
+    is_creater = crud.get_session_creater(user_id,session.id, db)
+    if not is_creater:
+       raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Only the creator can close the session"
+        ) 
     if not session:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Session not found"
