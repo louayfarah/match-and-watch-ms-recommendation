@@ -1,8 +1,22 @@
 from sqlalchemy.orm import Session
 import uuid
 import random
+import datetime
 
 from core.models import tables
+
+
+def create_solo_suggestions_history(
+    db: Session, user_id: uuid.UUID, query_string: str, top_movies_imdb_ids: list[str]
+):
+    new_history = tables.SoloSuggestionsHistory(
+        user_id=user_id,
+        query_string=query_string,
+        suggestions=top_movies_imdb_ids,
+        created_at=datetime.datetime.utcnow(),
+    )
+    db.add(new_history)
+    db.commit()
 
 
 def create_session(user_id: uuid.UUID, db: Session):
@@ -44,3 +58,10 @@ def close_session_by_code(session_code: int, db: Session):
         session.status = False
         db.commit()
     return session
+
+
+def read_movie_details(db: Session, imdb_id: str) -> tables.Movie | None:
+    ans = db.query(tables.Movie).filter(tables.Movie.imdb_id == imdb_id).first()
+    print(ans)
+
+    return ans
