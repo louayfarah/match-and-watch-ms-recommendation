@@ -3,8 +3,11 @@ from sklearn.metrics.pairwise import cosine_similarity
 import torch
 from datetime import datetime
 import numpy as np
+from sqlalchemy.orm import Session
+
 from load import model, tokenizer
 from config import Config
+from core.crud.crud import read_movie_details
 
 conf = Config()
 
@@ -38,7 +41,12 @@ def find_top_movies(df, input_list, top_n=5):
     top_25_movies_sorted = top_25_movies.sort_values(by="imdb_score", ascending=False)
     final_top_movies = top_25_movies_sorted.head(top_n)
 
-    return final_top_movies["title"].tolist()
+    return final_top_movies["imdb_id"].tolist()
+
+
+def extend_top_movies(db: Session, movies_imdb_ids: list[str]):
+    extended_movies = [read_movie_details(db, imdb_id) for imdb_id in movies_imdb_ids]
+    return extended_movies
 
 
 def fetch_leatest_movies(movie_type, page=1):
@@ -50,6 +58,7 @@ def fetch_leatest_movies(movie_type, page=1):
         print(f"Failed to retrieve data: {response.status_code} - {response.text}")
         return []
 
+
 def find_session_top_movies(df, input_embedding, top_n=5):
     df["cosine_similarity"] = df["combined_embedding"].apply(
         lambda x: cosine_similarity(x.reshape(1, -1), input_embedding.numpy())[0][0]
@@ -59,4 +68,4 @@ def find_session_top_movies(df, input_embedding, top_n=5):
     top_25_movies_sorted = top_25_movies.sort_values(by="imdb_score", ascending=False)
     final_top_movies = top_25_movies_sorted.head(top_n)
 
-    return final_top_movies["title"].tolist()
+    return final_top_movies["imdb_id"].tolist()

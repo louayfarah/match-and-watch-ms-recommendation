@@ -1,8 +1,19 @@
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import Column, String, ForeignKey, DateTime,Integer,Float,Boolean
+from sqlalchemy import (
+    Column,
+    String,
+    ForeignKey,
+    DateTime,
+    Integer,
+    Float,
+    Boolean,
+    ARRAY,
+)
 from sqlalchemy.orm import declarative_base, relationship
 from datetime import datetime
+
+
 Base = declarative_base()
 
 
@@ -27,22 +38,24 @@ class Movie(Base):
         "Feedback",backref="movie", cascade="all, delete-orphan"
     )
 
+
 class Session(Base):
-    __tablename__ = 'sessions'
+    __tablename__ = "sessions"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), nullable=False) 
+    user_id = Column(UUID(as_uuid=True), nullable=False)
     session_code = Column(Integer, unique=True, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     participants = relationship(
         "SessionParticipant", backref="session", cascade="all, delete-orphan"
     )
-    status = Column(Boolean, default=True) 
+    status = Column(Boolean, default=True)
+
 
 class SessionParticipant(Base):
-    __tablename__ = 'session_participants'
+    __tablename__ = "session_participants"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    session_id = Column(UUID(as_uuid=True), ForeignKey('sessions.id'), index=True)
-    user_id = Column(UUID(as_uuid=True), nullable=False) 
+    session_id = Column(UUID(as_uuid=True), ForeignKey("sessions.id"), index=True)
+    user_id = Column(UUID(as_uuid=True), nullable=False)
     joined_at = Column(DateTime, default=datetime.utcnow)
 
 
@@ -54,9 +67,20 @@ class Answer(Base):
     user_id = Column(UUID(as_uuid=True))
     answers = Column(String)
 
+
 class Feedback(Base):
     __tablename__='feedback'
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), nullable=False) 
     movie_imdb_id = Column(String(255) ,ForeignKey('movies.imdb_id'),index=True)
     rate = Column(Integer, default=0)
+
+    
+class SoloSuggestionsHistory(Base):
+    __tablename__ = "solo_suggestions_history"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True))
+    query_string = Column(String)
+    suggestions = Column(ARRAY(String))
+    created_at = Column(DateTime, default=datetime.utcnow)

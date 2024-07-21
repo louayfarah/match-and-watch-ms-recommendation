@@ -19,3 +19,26 @@ for file in files:
 
 # Concatenate all embeddings
 df = pd.concat(dfs)
+
+# Group by 'title' and aggregate the other columns
+df = (
+    df.groupby("title")
+    .agg(
+        {
+            "id": "first",
+            "imdb_id": "first",
+            "type": "first",
+            "description": "first",
+            "release_year": "first",
+            "age_certification": "first",
+            "runtime": "first",
+            "genres": "first",
+            "imdb_score": "first",
+            "emotions": "first",
+            "length": "first",
+            "platform": " ".join,  # Concatenate platform values
+            "combined_embedding": "first",
+        }
+    )
+    .reset_index()
+)
