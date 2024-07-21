@@ -15,7 +15,7 @@ conf = Config()
 session_router = APIRouter(tags=["Multiple Users"])
 
 
-@session_router.post("/api/submit-session-answer")
+@session_router.post("/api/submit-session-answer", status_code=201)
 def submit_session_answer(
     session_code: int,
     answers: str,
@@ -49,7 +49,7 @@ def generate_code(
     return session_management.create_session(user.get("id"), db)
 
 
-@session_router.post("/api/join-session/{session_code}")
+@session_router.post("/api/join-session/{session_code}", status_code=201)
 def join_session(
     session_code: int,
     db: Session = Depends(get_db),
