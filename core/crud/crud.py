@@ -84,3 +84,9 @@ def get_session_creater(user_id: uuid.UUID, session_id: int, db: Session):
         .filter(tables.Session.user_id == user_id, tables.Session.id == session_id)
         .first()
     )
+
+def change_session_status(session_code: int,status:bool, db: Session):
+    session=get_session_by_code(session_code,db)
+    session.status=status
+    db.add(session)
+    db.commit()
