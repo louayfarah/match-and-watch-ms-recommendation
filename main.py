@@ -15,7 +15,10 @@ app = FastAPI()
 tables.Base.metadata.create_all(bind=engine)
 
 # Allow all origins
-origins = ["*"]
+origins = [ 
+    "http://10.100.32.27:8001",
+    "http://10.100.32.27:8000"
+    ]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
