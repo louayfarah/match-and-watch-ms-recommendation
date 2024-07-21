@@ -1,3 +1,8 @@
+db:
+  postgres:
+    url: ${POSTGRES_URI}
+user_microservice:
+  url: ${USER_MICROSERVICE}
 tmdb:
   token: ${TMDB_TOKEN}
 movieglu:

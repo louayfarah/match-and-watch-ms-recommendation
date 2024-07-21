@@ -1,5 +1,5 @@
-from transformers import T5Model, T5Tokenizer
+from transformers import BertTokenizer, BertModel
 import torch
 
-model = T5Model.from_pretrained("t5-small")
-tok = T5Tokenizer.from_pretrained("t5-small")
+tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
+model = BertModel.from_pretrained("bert-base-uncased")
