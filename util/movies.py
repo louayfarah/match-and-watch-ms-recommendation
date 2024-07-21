@@ -68,4 +68,4 @@ def find_session_top_movies(df, input_embedding, top_n=5):
     top_25_movies_sorted = top_25_movies.sort_values(by="imdb_score", ascending=False)
     final_top_movies = top_25_movies_sorted.head(top_n)
 
-    return final_top_movies["title"].tolist()
+    return final_top_movies["imdb_id"].tolist()

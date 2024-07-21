@@ -58,7 +58,9 @@ def join_session(
     return session_management.join_session(session_code, user.get("id"), db)
 
 
-@session_router.post("/api/close-session")
+@session_router.post(
+    "/api/close-session", status_code=201, response_model=list[schemas.Movie]
+)
 def close_session(
     session_code: int,
     db: Session = Depends(get_db),
