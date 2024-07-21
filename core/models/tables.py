@@ -20,7 +20,7 @@ Base = declarative_base()
 class Movie(Base):
     __tablename__ = "movies"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    imdb_id = Column(String(255))
+    imdb_id = Column(String(255),unique=True)
     title = Column(String(255))
     type = Column(String(255))
     description = Column(String(100000))
@@ -34,6 +34,9 @@ class Movie(Base):
     emotions = Column(String(255))
     length = Column(String(255))
     platform = Column(String(255))
+    feedback = relationship(
+        "Feedback",backref="movie", cascade="all, delete-orphan"
+    )
 
 
 class Session(Base):
@@ -73,3 +76,11 @@ class SoloSuggestionsHistory(Base):
     query_string = Column(String)
     suggestions = Column(ARRAY(String))
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    
+class Feedback(Base):
+    __tablename__='feedback'
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), nullable=False) 
+    movie_imdb_id = Column(String(255) ,ForeignKey('movies.imdb_id'),index=True)
+    rate = Column(Integer, default=0)

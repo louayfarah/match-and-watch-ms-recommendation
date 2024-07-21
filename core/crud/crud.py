@@ -95,3 +95,12 @@ def change_session_status(session_code: int,status:bool, db: Session):
 def get_user_history_by_id(user_id: uuid.UUID, db: Session):
     return db.query(tables.SoloSuggestionsHistory).filter(tables.SoloSuggestionsHistory.user_id==user_id).all()
 
+def get_movie_by_imdb_id(imdb_id:str , db: Session):
+    return db.query(tables.Movie).filter(tables.Movie.imdb_id==imdb_id).first()
+
+def create_feedback(rate: int, movie_imdb_id: str, user_id: uuid.UUID, db: Session):
+    new_feedback = tables.Feedback(
+        movie_imdb_id=movie_imdb_id, user_id=user_id, rate=rate
+    )
+    db.add(new_feedback)
+    db.commit()
