@@ -64,4 +64,4 @@ def close_session(
     db: Session = Depends(get_db),
     user: schemas.AuthenticatedUser = Depends(validate_user_token),
 ):
-    return session_management.close_session(session_code, db)
+    return session_management.close_session(session_code, user.get("id"), db)
