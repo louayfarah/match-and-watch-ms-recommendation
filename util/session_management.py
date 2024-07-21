@@ -53,6 +53,7 @@ def close_session(session_code: int, user_id: uuid.UUID, db: Session):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Session is already closed"
         )
+    
     answers_tuples = (
         db.query(tables.Answer.answers)
         .filter(tables.Answer.session_id == session.id)
@@ -65,5 +66,5 @@ def close_session(session_code: int, user_id: uuid.UUID, db: Session):
 
     recommended_movies = find_session_top_movies(df, average_embedding)
     res = extend_top_movies(db, recommended_movies)
-
+    crud.change_session_status(session_code, False, db)
     return res
