@@ -26,28 +26,6 @@ columns = [
 ]
 df_to_insert = df[columns]
 
-# Group by 'title' and aggregate the other columns
-df_to_insert = (
-    df_to_insert.groupby("title")
-    .agg(
-        {
-            "id": "first",
-            "imdb_id": "first",
-            "type": "first",
-            "description": "first",
-            "release_year": "first",
-            "age_certification": "first",
-            "runtime": "first",
-            "genres": "first",
-            "imdb_score": "first",
-            "emotions": "first",
-            "length": "first",
-            "platform": " ".join,  # Concatenate platform values
-        }
-    )
-    .reset_index()
-)
-
 # Generate a uuid for each row in df
 df_to_insert["id"] = [uuid.uuid4() for _ in range(len(df_to_insert))]
 
