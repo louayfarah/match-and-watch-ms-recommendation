@@ -53,13 +53,19 @@ def close_session(session_code: int, user_id: uuid.UUID, db: Session):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Session is already closed"
         )
-    
+
     answers_tuples = (
         db.query(tables.Answer.answers)
         .filter(tables.Answer.session_id == session.id)
         .all()
     )
     all_answers = [answers[0] for answers in answers_tuples]
+
+    if len(all_answers) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No answers submitted for this session",
+        )
 
     embeddings = [get_embedding(answer) for answer in all_answers]
     average_embedding = torch.mean(torch.stack(embeddings), dim=0)
