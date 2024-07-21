@@ -1,9 +1,15 @@
 import requests
+import uuid
+from sqlalchemy.orm import Session
+from core.schemas import schemas
+from core.crud import crud
 from datetime import datetime, timezone
+from dependencies import get_db, validate_user_token
+from core.models import tables
+from core.crud.crud import create_solo_suggestions_history
+from fastapi import APIRouter, Depends
 
-from fastapi import APIRouter
-
-from util import find_top_movies, fetch_leatest_movies
+from util import fetch_leatest_movies, extend_top_movies, find_top_movies
 from load import df
 from config import Config
 
@@ -12,16 +18,22 @@ movies_router = APIRouter()
 
 
 @movies_router.post(
-    "/api/movies", tags=["Movies"], status_code=201, response_model=list[str]
+    "/api/movies", tags=["Solo"], status_code=201, response_model=list[schemas.Movie]
 )
 async def run_new_movies_query(
     query_string: str,
-):  # TODO: Change into different aspects from the questions, and build the query string accordingly
-    res = find_top_movies(df, query_string)
+    db: Session = Depends(get_db),
+    user: schemas.AuthenticatedUser = Depends(validate_user_token),
+):
+    user_id = user.get("id")
+    top_movies_imdb_ids = find_top_movies(df, query_string)
+    res = extend_top_movies(db, top_movies_imdb_ids)
+    create_solo_suggestions_history(db, user_id, query_string, top_movies_imdb_ids)
+
     return res
 
 
-@movies_router.get("/api/movies/latest")
+@movies_router.get("/api/movies/latest", tags=["Latest Movies"])
 def get_latest_movies():
     all_movies = []
     total_movies = 50
@@ -36,7 +48,7 @@ def get_latest_movies():
     return all_movies
 
 
-@movies_router.get("/api/movies/latest_with_images")
+@movies_router.get("/api/movies/latest_with_images", tags=["Latest Movies"])
 def get_latest_movies():
     headers = {
         "client": conf.get_movieglu_client(),
@@ -77,7 +89,7 @@ def get_latest_movies():
         print(response.text)
 
 
-@movies_router.get("/api/movies/latest_imdb8")
+@movies_router.get("/api/movies/latest_imdb8", tags=["Latest Movies"])
 def get_latest_movies():
     url = "https://ott-details.p.rapidapi.com/advancedsearch"
 

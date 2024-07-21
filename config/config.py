@@ -39,3 +39,9 @@ class Config(metaclass=Singleton):
 
     def get_movieglu_geolocation(self):
         return self.conf["movieglu"]["geolocation"]
+    
+    def get_user_microservice_url(self):
+        return self.conf["user_microservice"]["url"]
+    
+    def get_database_connection_string(self):
+        return self.conf["db"]["postgres"]["url"]
