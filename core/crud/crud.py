@@ -90,3 +90,8 @@ def change_session_status(session_code: int,status:bool, db: Session):
     session.status=status
     db.add(session)
     db.commit()
+
+
+def get_user_history_by_id(user_id: uuid.UUID, db: Session):
+    return db.query(tables.SoloSuggestionsHistory).filter(tables.SoloSuggestionsHistory.user_id==user_id).all()
+

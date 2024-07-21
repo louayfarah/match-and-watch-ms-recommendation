@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from routers import movies_router,session_router
+from routers import movies_router,session_router,history_router
 
 from routers import movies_router
 from core.databases.postgres.postgres import engine
@@ -30,6 +30,7 @@ app.add_middleware(
 # Include the routers
 app.include_router(movies_router)
 app.include_router(session_router)
+app.include_router(history_router)
 
 
 # Define the root source
