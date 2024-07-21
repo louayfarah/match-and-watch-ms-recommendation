@@ -14,7 +14,7 @@ from load import df
 from config import Config
 
 conf = Config()
-movies_router = APIRouter(tags=["Movies"])
+movies_router = APIRouter()
 
 
 @movies_router.post(
@@ -33,7 +33,7 @@ async def run_new_movies_query(
     return res
 
 
-@movies_router.get("/api/movies/latest")
+@movies_router.get("/api/movies/latest", tags=["Latest Movies"])
 def get_latest_movies():
     all_movies = []
     total_movies = 50
@@ -48,7 +48,7 @@ def get_latest_movies():
     return all_movies
 
 
-@movies_router.get("/api/movies/latest_with_images")
+@movies_router.get("/api/movies/latest_with_images", tags=["Latest Movies"])
 def get_latest_movies():
     headers = {
         "client": conf.get_movieglu_client(),
@@ -89,7 +89,7 @@ def get_latest_movies():
         print(response.text)
 
 
-@movies_router.get("/api/movies/latest_imdb8")
+@movies_router.get("/api/movies/latest_imdb8", tags=["Latest Movies"])
 def get_latest_movies():
     url = "https://ott-details.p.rapidapi.com/advancedsearch"
 
