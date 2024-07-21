@@ -27,6 +27,12 @@ def submit_session_answer(
         raise HTTPException(
             status_code=404, detail="Session not found or already closed"
         )
+    user_submitted = crud.get_user_by_session_id(user.get("id"), session.id, db)
+    if user_submitted:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You have already submited your answers ",
+        )
     new_answer = tables.Answer(
         session_id=session.id, user_id=user.get("id"), answers=answers
     )
