@@ -107,3 +107,8 @@ def get_latest_movies():
         return response.json()
     else:
         return {"error": "Unable to fetch movie "}, response.status_code
+
+
+@movies_router.get("/api/available")
+def get_movies(db: Session = Depends(get_db)):
+    return db.query(tables.Movie).limit(3).all()

@@ -5,17 +5,19 @@ import datetime
 
 from core.models import tables
 
-
 def create_solo_suggestions_history(
     db: Session, user_id: uuid.UUID, query_string: str, top_movies_imdb_ids: list[str]
 ):
-    new_history = tables.SoloSuggestionsHistory(
-        user_id=user_id,
-        query_string=query_string,
-        suggestions=top_movies_imdb_ids,
-        created_at=datetime.datetime.utcnow(),
-    )
-    db.add(new_history)
+    for imdb_id in top_movies_imdb_ids:
+        movie = db.query(tables.Movie).filter(tables.Movie.imdb_id == imdb_id).first()
+        new_history = tables.SoloSuggestionsHistory(
+            user_id=user_id,
+            query_string=query_string,
+            movie_imdb_id=imdb_id,
+            created_at=datetime.datetime.utcnow(),
+            description=movie.description,
+        )
+        db.add(new_history)
     db.commit()
 
 
@@ -104,3 +106,15 @@ def create_feedback(rate: int, movie_imdb_id: str, user_id: uuid.UUID, db: Sessi
     )
     db.add(new_feedback)
     db.commit()
+
+
+def update_movie_rating_in_history(user_id: uuid.UUID, movie_imdb_id: str, rating: int, db: Session):
+    history_entry = db.query(tables.SoloSuggestionsHistory).filter(
+        tables.SoloSuggestionsHistory.user_id == user_id,
+        tables.SoloSuggestionsHistory.movie_imdb_id == movie_imdb_id
+    ).first()
+    if history_entry:
+        history_entry.rating = rating
+        db.commit()
+        db.refresh(history_entry)
+    return history_entry

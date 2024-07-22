@@ -37,6 +37,9 @@ class Movie(Base):
     feedback = relationship(
         "Feedback",backref="movie", cascade="all, delete-orphan"
     )
+    history = relationship(
+        "SoloSuggestionsHistory",backref="history", cascade="all, delete-orphan"
+    )
 
 
 class Session(Base):
@@ -74,8 +77,10 @@ class SoloSuggestionsHistory(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True))
     query_string = Column(String)
-    suggestions = Column(ARRAY(String))
+    movie_imdb_id = Column(String(255) ,ForeignKey('movies.imdb_id'),index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    rating = Column(Integer, default=0)
+    description = Column(String(100000))
 
     
 class Feedback(Base):

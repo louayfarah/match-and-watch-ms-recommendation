@@ -11,5 +11,6 @@ def add_rating(rate: int, movie_imdb_id: str, user_id: uuid.UUID, db: Session):
     crud.create_feedback(
         movie_imdb_id=movie_imdb_id, user_id=user_id, rate=rate, db=db
     )
+    crud.update_movie_rating_in_history(user_id, movie_imdb_id, rate, db)
     return {"feedback added successfully"}
 
