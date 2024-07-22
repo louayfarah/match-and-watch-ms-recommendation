@@ -20,7 +20,7 @@ Base = declarative_base()
 class Movie(Base):
     __tablename__ = "movies"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    imdb_id = Column(String(255))
+    imdb_id = Column(String(255), unique=True)
     title = Column(String(255))
     type = Column(String(255))
     description = Column(String(100000))
@@ -63,6 +63,14 @@ class Answer(Base):
     session_id = Column(UUID(as_uuid=True), ForeignKey("sessions.id"))
     user_id = Column(UUID(as_uuid=True))
     answers = Column(String)
+
+
+class Feedback(Base):
+    __tablename__ = "feedback"
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), nullable=False)
+    movie_imdb_id = Column(String(255))
+    rate = Column(Integer, default=0)
 
 
 class SoloSuggestionsHistory(Base):
