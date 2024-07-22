@@ -12,8 +12,10 @@ app = FastAPI()
 
 tables.Base.metadata.create_all(bind=engine)
 
-# Allow all origins
-origins = ["*"]
+origins = [
+    "http://localhost:8081",
+]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
