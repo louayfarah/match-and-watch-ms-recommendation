@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from config import Config
 
 conf = Config()
-history_router = APIRouter()
+history_router = APIRouter(tags=["history"])
 
 @history_router.get("/api/history", status_code=200)
 def get_user_history(
