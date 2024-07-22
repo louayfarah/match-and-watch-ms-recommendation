@@ -85,8 +85,35 @@ def get_session_creater(user_id: uuid.UUID, session_id: int, db: Session):
         .first()
     )
 
-def change_session_status(session_code: int,status:bool, db: Session):
-    session=get_session_by_code(session_code,db)
-    session.status=status
+
+def change_session_status(session_code: int, status: bool, db: Session):
+    session = get_session_by_code(session_code, db)
+    session.status = status
     db.add(session)
     db.commit()
+
+
+def read_feedbacks(db: Session, imdb_id: str, user_id: uuid.UUID):
+    feedback = (
+        db.query(tables.Feedback)
+        .filter(
+            tables.Feedback.movie_imdb_id == imdb_id, tables.Feedback.user_id == user_id
+        )
+        .first()
+    )
+    return feedback
+
+
+def update_movie_rating(rate: int, imdb_id: str, user_id: uuid.UUID, db: Session):
+    feedback = read_feedbacks(db, imdb_id, user_id)
+    if feedback:
+        feedback.rate = rate
+        db.add(feedback)
+        db.commit()
+    else:
+        new_feedback = tables.Feedback(
+            user_id=user_id, movie_imdb_id=imdb_id, rate=rate
+        )
+        db.add(new_feedback)
+        db.commit()
+    return {"status": "rating added"}
