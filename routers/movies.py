@@ -21,14 +21,22 @@ movies_router = APIRouter()
     "/api/movies", tags=["Solo"], status_code=201, response_model=list[schemas.Movie]
 )
 async def run_new_movies_query(
-    query_string: str,
+    query_dict: schemas.UserAnswer,
     db: Session = Depends(get_db),
     user: schemas.AuthenticatedUser = Depends(validate_user_token),
 ):
     user_id = user.get("id")
-    top_movies_imdb_ids = find_top_movies(df, query_string)
+    query_dict_list = []
+    query_dict_list.append(query_dict.model_dump())
+    print(query_dict_list)
+    print(type(query_dict_list[0]))
+    top_movies_imdb_ids = find_top_movies(df, query_dict_list)
     res = extend_top_movies(db, top_movies_imdb_ids)
-    create_solo_suggestions_history(db, user_id, query_string, top_movies_imdb_ids)
+    print(top_movies_imdb_ids)
+    print(res)
+    create_solo_suggestions_history(
+        db, user_id, query_dict.model_dump(), top_movies_imdb_ids
+    )
 
     # Add a feedback row for all suggested movies, with initial feedback rate 0
     for movie in top_movies_imdb_ids:

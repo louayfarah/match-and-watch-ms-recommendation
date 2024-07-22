@@ -7,11 +7,11 @@ from core.models import tables
 
 
 def create_solo_suggestions_history(
-    db: Session, user_id: uuid.UUID, query_string: str, top_movies_imdb_ids: list[str]
+    db: Session, user_id: uuid.UUID, query_dict, top_movies_imdb_ids: list[str]
 ):
     new_history = tables.SoloSuggestionsHistory(
         user_id=user_id,
-        query_string=query_string,
+        query_dict=query_dict,
         suggestions=top_movies_imdb_ids,
         created_at=datetime.datetime.utcnow(),
     )
