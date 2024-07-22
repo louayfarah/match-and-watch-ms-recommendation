@@ -16,6 +16,7 @@ def update_rating(
 ):
     try:
         crud.update_movie_rating(rate, movie_imdb_id, user.get("id"), db)
+        crud.update_movie_rating_in_history(user.get("id"), movie_imdb_id, rate, db)
         return {"status": "rating added"}
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

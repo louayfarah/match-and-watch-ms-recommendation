@@ -6,17 +6,32 @@ import datetime
 from core.models import tables
 
 
+def get_user_history_by_id(user_id: uuid.UUID, db: Session):
+    return db.query(tables.SoloSuggestionsHistory).filter(tables.SoloSuggestionsHistory.user_id==user_id).all()
+
+
 def create_solo_suggestions_history(
     db: Session, user_id: uuid.UUID, query_dict, top_movies_imdb_ids: list[str]
 ):
-    new_history = tables.SoloSuggestionsHistory(
-        user_id=user_id,
-        query_dict=query_dict,
-        suggestions=top_movies_imdb_ids,
-        created_at=datetime.datetime.utcnow(),
-    )
-    db.add(new_history)
+    for imdb_id in top_movies_imdb_ids:
+        existing_history = db.query(tables.SoloSuggestionsHistory).filter(
+            tables.SoloSuggestionsHistory.user_id == user_id,
+            tables.SoloSuggestionsHistory.movie_imdb_id == imdb_id
+        ).first()
+        
+        if existing_history is None:
+            movie = db.query(tables.Movie).filter(tables.Movie.imdb_id == imdb_id).first()
+            new_history = tables.SoloSuggestionsHistory(
+                user_id=user_id,
+                query_dict=query_dict,
+                movie_imdb_id=imdb_id,
+                created_at=datetime.datetime.utcnow(),
+                description=movie.description,
+                title=movie.title 
+            )
+            db.add(new_history)
     db.commit()
+
 
 
 def create_session(user_id: uuid.UUID, db: Session):
@@ -117,3 +132,15 @@ def update_movie_rating(rate: int, imdb_id: str, user_id: uuid.UUID, db: Session
         db.add(new_feedback)
         db.commit()
     return {"status": "rating added"}
+
+
+def update_movie_rating_in_history(user_id: uuid.UUID, movie_imdb_id: str, rating: int, db: Session):
+    history_entry = db.query(tables.SoloSuggestionsHistory).filter(
+        tables.SoloSuggestionsHistory.user_id == user_id,
+        tables.SoloSuggestionsHistory.movie_imdb_id == movie_imdb_id
+    ).all()
+    for entrey in history_entry:
+        if entrey:
+            entrey.rating = rating
+    db.commit()
+    return history_entry
