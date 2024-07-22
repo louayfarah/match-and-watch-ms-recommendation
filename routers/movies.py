@@ -30,6 +30,10 @@ async def run_new_movies_query(
     res = extend_top_movies(db, top_movies_imdb_ids)
     create_solo_suggestions_history(db, user_id, query_string, top_movies_imdb_ids)
 
+    # Add a feedback row for all suggested movies, with initial feedback rate 0
+    for movie in top_movies_imdb_ids:
+        crud.update_movie_rating(0, movie, user_id, db)
+
     return res
 
 
