@@ -4,7 +4,7 @@ from fastapi import HTTPException, status
 from core.crud import crud
 import uuid
 from core.models import tables
-from util import find_session_top_movies, get_embedding, extend_top_movies
+from util import find_top_movies, extend_top_movies
 from load import df
 
 
@@ -67,10 +67,9 @@ def close_session(session_code: int, user_id: uuid.UUID, db: Session):
             detail="No answers submitted for this session",
         )
 
-    embeddings = [get_embedding(answer) for answer in all_answers]
-    average_embedding = torch.mean(torch.stack(embeddings), dim=0)
-
-    recommended_movies = find_session_top_movies(df, average_embedding)
+    recommended_movies = find_top_movies(
+        df, all_answers, number_of_users=len(all_answers)
+    )
     res = extend_top_movies(db, recommended_movies)
     crud.change_session_status(session_code, False, db)
     return res

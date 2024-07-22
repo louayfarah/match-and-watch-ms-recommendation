@@ -9,6 +9,7 @@ from sqlalchemy import (
     Float,
     Boolean,
     ARRAY,
+    JSON,
 )
 from sqlalchemy.orm import declarative_base, relationship
 from datetime import datetime
@@ -62,7 +63,7 @@ class Answer(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     session_id = Column(UUID(as_uuid=True), ForeignKey("sessions.id"))
     user_id = Column(UUID(as_uuid=True))
-    answers = Column(String)
+    answers = Column(JSON)
 
 
 class Feedback(Base):
@@ -78,6 +79,6 @@ class SoloSuggestionsHistory(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True))
-    query_string = Column(String)
+    query_dict = Column(JSON)
     suggestions = Column(ARRAY(String))
     created_at = Column(DateTime, default=datetime.utcnow)

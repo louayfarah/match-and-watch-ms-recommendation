@@ -25,3 +25,13 @@ class Movie(BaseModel):
     length: str
     platform: str
     model_config = ConfigDict(from_attributes=True)
+
+
+class UserAnswer(BaseModel):
+    genres: list[str] | None
+    emotions: list[str] | None
+    length: str | None
+    type: str | None
+    age_certification: str | None
+    release_year: int | None
+    model_config = ConfigDict(from_attributes=True)

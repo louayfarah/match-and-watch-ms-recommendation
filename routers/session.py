@@ -18,7 +18,7 @@ session_router = APIRouter(tags=["Multiple Users"])
 @session_router.post("/api/submit-session-answer", status_code=201)
 def submit_session_answer(
     session_code: int,
-    answers: str,
+    answers: schemas.UserAnswer,
     db: Session = Depends(get_db),
     user: schemas.AuthenticatedUser = Depends(validate_user_token),
 ):
@@ -34,7 +34,7 @@ def submit_session_answer(
             detail="You have already submited your answers ",
         )
     new_answer = tables.Answer(
-        session_id=session.id, user_id=user.get("id"), answers=answers
+        session_id=session.id, user_id=user.get("id"), answers=answers.dict()
     )
     db.add(new_answer)
     db.commit()
