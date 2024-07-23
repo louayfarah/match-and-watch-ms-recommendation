@@ -45,6 +45,20 @@ async def run_new_movies_query(
     return res
 
 
+@movies_router.get(
+    "/api/movies/history",
+    tags=["Solo"],
+    status_code=200,
+    response_model=list[schemas.SoloSuggestionsHistory],
+)
+async def get_solo_suggestions_history(
+    db: Session = Depends(get_db),
+    user: schemas.AuthenticatedUser = Depends(validate_user_token),
+):
+    user_id = user.get("id")
+    return crud.get_solo_suggestions_history(db, user_id)
+
+
 @movies_router.get("/api/movies/latest", tags=["Latest Movies"])
 def get_latest_movies():
     all_movies = []

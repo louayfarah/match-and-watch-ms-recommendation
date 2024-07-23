@@ -35,3 +35,12 @@ class UserAnswer(BaseModel):
     age_certification: str | None
     release_year: int | None
     model_config = ConfigDict(from_attributes=True)
+
+
+class SoloSuggestionsHistory(BaseModel):
+    user_id: uuid.UUID
+    imdb_id: str
+    title: str
+    description: str
+    rating: int
+    model_config = ConfigDict(from_attributes=True)

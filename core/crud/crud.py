@@ -117,3 +117,31 @@ def update_movie_rating(rate: int, imdb_id: str, user_id: uuid.UUID, db: Session
         db.add(new_feedback)
         db.commit()
     return {"status": "rating added"}
+
+
+def get_solo_suggestions_history(db: Session, user_id: uuid.UUID):
+    res_query = (
+        db.query(tables.SoloSuggestionsHistory)
+        .filter(tables.SoloSuggestionsHistory.user_id == user_id)
+        .all()
+    )
+
+    imdb_ids = []
+    for i in range(len(res_query)):
+        for j in range(len(res_query[i].suggestions)):
+            imdb_ids.append(res_query[i].suggestions[j])
+
+    res = []
+    for i in range(len(imdb_ids)):
+        movie = read_movie_details(db, imdb_ids[i])
+        res.append(
+            {
+                "user_id": user_id,
+                "imdb_id": movie.imdb_id,
+                "title": movie.title,
+                "description": movie.description,
+                "rating": 0,
+            }
+        )
+
+    return res
