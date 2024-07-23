@@ -13,6 +13,8 @@ app = FastAPI()
 tables.Base.metadata.create_all(bind=engine)
 
 origins = [
+    "http://localhost:8000",
+    "http://localhost:0801",
     "http://localhost:8081",
 ]
 
