@@ -28,12 +28,8 @@ async def run_new_movies_query(
     user_id = user.get("id")
     query_dict_list = []
     query_dict_list.append(query_dict.model_dump())
-    print(query_dict_list)
-    print(type(query_dict_list[0]))
     top_movies_imdb_ids = find_top_movies(df, query_dict_list)
     res = extend_top_movies(db, top_movies_imdb_ids)
-    print(top_movies_imdb_ids)
-    print(res)
     create_solo_suggestions_history(
         db, user_id, query_dict.model_dump(), top_movies_imdb_ids
     )

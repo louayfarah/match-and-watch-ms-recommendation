@@ -63,7 +63,6 @@ def close_session_by_code(session_code: int, db: Session):
 
 def read_movie_details(db: Session, imdb_id: str) -> tables.Movie | None:
     ans = db.query(tables.Movie).filter(tables.Movie.imdb_id == imdb_id).first()
-    print(ans)
 
     return ans
 
