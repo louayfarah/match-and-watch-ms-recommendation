@@ -5,6 +5,6 @@ WORKDIR /app
 COPY ./requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 COPY . /app
-EXPOSE 8001
+EXPOSE 8002
 RUN chmod +x run_server.sh
 CMD ["/bin/sh", "./run_server.sh"]
